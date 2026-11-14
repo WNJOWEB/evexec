@@ -137,3 +137,11 @@ test('a return leg finds its outbound booking whatever the prefix', async () => 
     assert.equal(JSON.parse(res.body).outbound_ref, 'OCB-OUT222');
   } finally { global.fetch = prev; }
 });
+
+test('a booking without a phone number is refused, email alone is not enough', async () => {
+  const noPhone = await create('www.evexec.co.uk', base({ customer_phone: '' }));
+  assert.equal(noPhone.status, 400);
+  assert.match(noPhone.body.error, /phone number/);
+  const blank = await create('www.evexec.co.uk', base({ customer_phone: '   ' }));
+  assert.equal(blank.status, 400);
+});

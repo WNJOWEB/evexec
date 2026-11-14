@@ -96,6 +96,8 @@ function validateBooking(body){
   for(const [k,n] of Object.entries(LIMITS))if(body[k]!=null&&String(body[k]).length>n)return 'Some details are too long. Please shorten them and try again.';
   const email=body.customer_email?String(body.customer_email).trim():'';
   if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return 'Please enter a valid email address.';
+  // A phone number is required on every booking: the office and drivers reach the customer by text.
+  if(!String(body.customer_phone||'').replace(/\s/g,'').match(/\d{7,}/))return 'Please enter a phone number so we can reach you about your journey.';
   const isDate=d=>/^\d{4}-\d{2}-\d{2}$/.test(String(d));
   if(!body.travel_date||!isDate(body.travel_date))return 'Please choose a travel date.';
   if(body.travel_date<ukToday())return 'The travel date is in the past. Please choose another date.';
